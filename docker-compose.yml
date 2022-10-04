@@ -3,30 +3,36 @@ version: '2'
 
 services:
     logservice1:
+        environment:
+            - PORT=35001
         build:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice1
         ports:
-            - "35001:35001"
+            - 35001:35001
         links:
             - db
     logservice2:
+        environment:
+            - PORT=35002
         build:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice2
         ports:
-            - "35002:35002"
+            - 35002:35002
         links:
             - db
     logservice3:
+        environment:
+            - PORT=35003
         build:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice3
         ports:
-            - "35003:35003"
+            - 35003:35003
         links:
             - db
     robin:
