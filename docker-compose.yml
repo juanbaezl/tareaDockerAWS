@@ -9,6 +9,7 @@ services:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice1
+        image: juanbaezl/round-robin:logservice1
         ports:
             - 35001:35001
         links:
@@ -20,6 +21,7 @@ services:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice2
+        image: juanbaezl/round-robin:logservice2
         ports:
             - 35002:35002
         links:
@@ -31,6 +33,7 @@ services:
             context: ./log-service
             dockerfile: Dockerfile
         container_name: logservice3
+        image: juanbaezl/round-robin:logservice3
         ports:
             - 35003:35003
         links:
@@ -42,8 +45,9 @@ services:
             context: ./reound-robin
             dockerfile: Dockerfile
         container_name: robin
+        image: juanbaezl/round-robin:robin
         ports:
-            - "35000:35000"
+            - 35000:35000
         links:
             - logservice1
             - logservice2

@@ -2,26 +2,34 @@ package co.edu.escuelaing.app;
 
 import static spark.Spark.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+public class App {
+
+    private static ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>() {
+        {
+            add("1");
+            add("2");
+            add("3");
+        }
+    };
+
     public static void main(String[] args) {
         staticFiles.location("/public");
         port(getPort());
         post("/log", (req, res) -> {
-            res.header("Access-Control-Allow-Origin","*");
+            res.header("Access-Control-Allow-Origin", "*");
             res.type("application/json");
-            return doPost(req.queryParams("value"));
+            return balancer(req.queryParams("value"));
         });
     }
 
@@ -32,19 +40,22 @@ public class App
         return 4567;
     }
 
-    public static String doPost(String value) {
+    public static String balancer(String value) {
+        String temp = queue.poll();
+        queue.add(temp);
+        return doPost(value, temp);
+    }
+
+    public static String doPost(String value, String server) {
         String linea = "";
         try {
-            String data = "value="+value;
-            URL url = new URL("http://logservice1:3500/api/backend?"+data);
+            String data = "value=" + value;
+            String url = "http://logservice" + server + ":3500" + server + "/api/backend?" + data;
             System.out.println(url.toString());
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setDoOutput(true);
-            con.getOutputStream().write(data.getBytes("UTF-8"));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            linea = reader.readLine();
-            reader.close();
+            HttpClient client = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(url);
+            HttpResponse response = client.execute(httpPost);
+            linea = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
         } catch (MalformedURLException me) {
             System.err.println("MalformedURLException: " + me);
         } catch (IOException ioe) {
