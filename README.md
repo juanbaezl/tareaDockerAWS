@@ -38,7 +38,21 @@ En esta pantalla podra guardar el valor en la base de datos pasando por los logs
 
 En caso de querer subirlo a AWS se puede encontrar en el siguiente repositorio de docker hub [Round-Robin](https://hub.docker.com/repository/docker/juanbaezl/round-robin/general)
 
-## Pruebas
+## Proceso
+
+Desplegando la aplicación como se indica en la guía de uso, comprobamos que los servicios esten corriendo con docker ps, y que se encuentren en el puerto 35000, 35001, 35002 y 35003.
+
+![](./img/dockerps.png)
+
+Una vez esten corriendo los servicios, podemos ingresar a la aplicación desde el navegador con la ruta http://localhost:35000, y podemos ver que se encuentra corriendo.
+
+![](./img/pagina.png)
+
+ingresamos un valor y le damos guardar, y nos muestra los ultimos 10 valores guardados.
+
+![](./img/valores.png)
+
+Estos valores los entregarán los diferentes logservices y a su vez estos se conectaran a la base de datos para guardar los valores.
 
 ## Autor
 
